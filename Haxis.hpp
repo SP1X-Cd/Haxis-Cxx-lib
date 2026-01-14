@@ -9,6 +9,9 @@
 #include <random>
 #include <string>
 #include <vector>
+#include <cassert>
+#include <cstdlib>
+#include <cstdio>
 
 namespace hxs {
 
@@ -162,6 +165,40 @@ inline bool eif_int(int a, const std::string& b, int c) {
   }
   return var;
 }
+
+inline int ls() {
+  return system("ls");
+}
+
+inline void cls() {
+  #ifndef _WIN32
+    system("cls");
+  #else
+    system("clear");
+  #endif
+}
+
+inline void unittest() {
+    assert(even_num(2) == true);
+    assert(even_num(3) == false);
+    assert(even_inv(2) == false);
+    assert(even_inv(3) == true);
+    assert(rev(10.0f) == -10.0f);
+    assert(rev(-5.0f) == 5.0f);
+    assert(std::abs(powrev(2.0, 1.0) - 0.5) < 0.0001);
+    assert(eif_int(5, "==", 5) == true);
+    assert(eif_int(10, ">", 5) == true);
+    assert(eif_int(3, "<", 1) == false);
+    assert(eif_int(5, "!=", 5) == false);
+    int r = get_random(1, 100);
+    assert(r >= 1 && r <= 100);
+    file_write("test_hxs.tmp", "test");
+    assert(file_read("test_hxs.tmp") == "test\n");
+    assert(ls() != -1);
+    std::cout << "Unit tests passed." << std::endl;
+    std::remove("test_hxs.tmp");
+}
+
 } // namespace hxs
 
 #endif
