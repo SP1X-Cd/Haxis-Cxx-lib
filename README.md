@@ -1,6 +1,6 @@
-# EASY_CPP Library Documentation
+# Haxis Library Documentation
 
-The `easy_cpp.h` library provides a set of helper functions to simplify working with C++.
+The `Haxis.hpp` library provides a set of helper functions to simplify working with C++.
 
 ## Table of Contents
 - [Input/Output](#inputoutput)
@@ -9,6 +9,8 @@ The `easy_cpp.h` library provides a set of helper functions to simplify working 
 - [Array Operations](#array-operations)
 - [Random Number Generation](#random-number-generation)
 - [Conditional Operations](#conditional-operations)
+- [System Utilities](#system-utilities)
+- [Testing](#testing)
 
 ---
 
@@ -243,6 +245,14 @@ Performs comparison of two integers according to the specified operator.
 
 **Returns:** comparison result (`true` or `false`)
 
+**Supported Operators:**
+- `"=="` - equal to
+- `">"` - greater than
+- `"<"` - less than
+- `">="` - greater than or equal to
+- `"<="` - less than or equal to
+- `"!="` - not equal to
+
 **Usage Example:**
 ```cpp
 bool result1 = hxs::eif_int(5, "==", 5);   // true
@@ -257,14 +267,67 @@ if (hxs::eif_int(age, ">=", 18)) {
 
 ---
 
-## Additional Functions
+## System Utilities
 
-### `todo()`
-Outputs a motivational message (utility function).
+### `ls()`
+Executes the `ls` command to list directory contents.
+
+**Returns:** system command exit code
 
 **Usage Example:**
 ```cpp
-hxs::todo();
+hxs::ls();  // Lists files in current directory
+```
+
+---
+
+### `cls()`
+Clears the console screen.
+
+**Platform Support:**
+- Windows: executes `cls` command
+- Unix/Linux/Mac: executes `clear` command
+
+**Usage Example:**
+```cpp
+hxs::cls();  // Clears the screen
+```
+
+**Note:** There's a bug in the original code - the preprocessor directives are inverted. On non-Windows systems it tries to run `cls`, and on Windows it tries to run `clear`.
+
+---
+
+## Testing
+
+### `unittest()`
+Runs unit tests for all library functions to verify correct operation.
+
+**Tests Include:**
+- `even_num()` and `even_inv()` correctness
+- `rev()` sign reversal
+- `powrev()` inverse power calculation
+- `eif_int()` comparison operations
+- `get_random()` range validation
+- File operations (`file_write()` and `file_read()`)
+- System command execution (`ls()`)
+
+**Usage Example:**
+```cpp
+hxs::unittest();  // Runs all tests and outputs "Unit tests passed."
+```
+
+**Note:** Creates a temporary file `test_hxs.tmp` which is deleted after testing.
+
+---
+
+## Additional Functions
+
+### `todo()`
+Outputs a philosophical message (utility function).
+
+**Usage Example:**
+```cpp
+hxs::todo();  // Prints: "Life isn't fair, what's the point of life if it's all crap"
 ```
 
 ---
@@ -272,11 +335,11 @@ hxs::todo();
 ## Complete Usage Example
 
 ```cpp
-#include "easy_cpp.h"
+#include "Haxis.hpp"
 
 int main() {
     // Input/Output
-    hxs::print("=== Library Demonstration ===");
+    hxs::print("=== Haxis Library Demonstration ===");
     
     std::string name = hxs::input<std::string>("Enter name: ");
     int age = hxs::input<int>("Enter age: ");
@@ -291,10 +354,20 @@ int main() {
         hxs::print("Your age is an even number");
     }
     
+    float negated = hxs::rev(5.0f);
+    hxs::print(negated);  // -5.0
+    
+    double inverse_power = hxs::powrev(2.0, 3.0);
+    hxs::print(inverse_power);  // 0.125
+    
     // Arrays
     int scores[] = {85, 90, 78, 92, 88};
     hxs::print("Scores:");
     hxs::print_arr(scores, 5);
+    
+    // Using Arrays class
+    hxs::Arrays<int> scoreArray(scores, 5);
+    scoreArray.get_arr();
     
     // Random numbers
     int lucky_number = hxs::get_random(1, 100);
@@ -307,6 +380,13 @@ int main() {
         hxs::print("Access denied");
     }
     
+    // System utilities
+    hxs::print("Directory contents:");
+    hxs::ls();
+    
+    // Run tests
+    hxs::unittest();
+    
     return 0;
 }
 ```
@@ -316,8 +396,9 @@ int main() {
 ## Notes
 
 - All functions are in the `hxs` namespace
-- To use the library, include the header file: `#include "easy_cpp.h"`
-- The library uses standard C++ libraries: `<iostream>`, `<fstream>`, `<vector>`, `<random>`, and others
+- To use the library, include the header file: `#include "Haxis.hpp"`
+- The library uses standard C++ libraries: `<iostream>`, `<fstream>`, `<vector>`, `<random>`, `<algorithm>`, `<cmath>`, `<cassert>`, and others
+- The `cls()` function has inverted platform checks in the current implementation
 
 ---
 
@@ -335,5 +416,20 @@ int main() {
 | `rev(n)` | Change sign |
 | `powrev(a, b)` | 1 / (a^b) |
 | `print_arr(arr, len)` | Output array |
+| `Arrays<T>` | Array wrapper class |
 | `get_random(min, max)` | Random number |
 | `eif_int(a, op, c)` | Compare numbers |
+| `ls()` | List directory |
+| `cls()` | Clear screen |
+| `todo()` | Philosophical message |
+| `unittest()` | Run all tests |
+
+---
+
+## Known Issues
+
+1. **`cls()` function bug**: The preprocessor directives are inverted
+   - Current code runs `cls` on non-Windows and `clear` on Windows
+   - Should be: `#ifdef _WIN32` for Windows, `#else` for Unix-like systems
+
+2. **File operations**: `file_read()` prints error to console instead of throwing exception or returning error code
